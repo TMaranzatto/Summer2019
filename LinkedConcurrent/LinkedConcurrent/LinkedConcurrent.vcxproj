@@ -80,7 +80,6 @@
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Node.h" />
     <ClInclude Include="NonBlockingLinkedList.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

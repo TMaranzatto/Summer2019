@@ -1,6 +1,5 @@
 #pragma once
 #include "Window.h"
-#include "Node.h"
 #include <Limits.h>
 
 template <class T>

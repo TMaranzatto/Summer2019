@@ -1,24 +1,29 @@
 #pragma once
-#include "Node.h"
 #include <cstddef>
+#include <atomic>
+
+struct node {
+	node* next;
+	int keyvalue;
+	//key = std::hash<std::T>()(data);
+};
 
 class Window {
-	class Node* pred;
-	class Node* curr;
-	Window(class Node* myPred, class Node* myCurr) {
+	node* pred;
+	node* curr;
+	Window(node* myPred, node* myCurr) {
 		pred = myPred; curr = myCurr;
 	}
 };
 
-Window find(class Node* head, int key) {
-	class Node* pred = NULL;
-	class Node* curr = NULL;
-	class Node* succ = NULL;
+Window find(node* head, int key) {
+	node* pred = NULL;
+	node* curr = NULL;
+	node* succ = NULL;
 	bool marked[] = { false };
 	bool snip;
-
 	while (true) {
 		pred = head;
-		curr = pred.next.
+		curr = head -> next;
 	}
 }
