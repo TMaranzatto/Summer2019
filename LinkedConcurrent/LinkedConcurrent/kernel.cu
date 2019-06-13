@@ -6,6 +6,7 @@
 #include "NonBlockingLinkedList.h"
 #include "kernel.h"
 
+__global__
 int main()
 {
 	NonBlockingLinkedList* l = new NonBlockingLinkedList();
