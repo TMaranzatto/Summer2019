@@ -20,7 +20,7 @@ using namespace std;
 
 
 
-template <class t> class cll {
+class cll {
 
 private:
 
@@ -104,7 +104,7 @@ public:
 	void mark(int vall, bool mmar) {
 		if (head == NULL) {
 			cout << "List is empty";
-			break;
+			//break;
 		}
 		Node* temp = head;
 		while (temp->next != NULL) {
@@ -145,17 +145,33 @@ public:
 
 	}
 
+	void print() {
+		Node* temp = head; 
+		
+		while (temp != NULL) {
+			cout << temp->val;
+			cout << endl; 
+			temp = temp->next; 
+
+
+		}
+
+
+	}
+
 	bool search(int value) {
 		Node* temp = head;
 		//bool marked[1] = { false };
 		if (head == NULL) {
 			return false;
 		}
-		while (temp->next != NULL) {
+		while (temp != NULL) {
 			if (temp->val == value && temp->marked == false) {
+				cout << "FOUND";
 				return true;
 			}
 			else if (temp->val == value && temp->marked == true) {
+				cout << "FOUND"; 
 				return false;
 			}
 			else {
