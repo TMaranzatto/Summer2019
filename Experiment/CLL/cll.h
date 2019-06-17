@@ -24,11 +24,13 @@ private:
 		T val; 
 		//int key; 
 		bool marked; 
-		Node(Node* nnext, T vval, bool mmarked) {
+		bool end; 
+		Node(Node* nnext, T vval, bool mmarked, bool iend) {
 			this->next = nnext; 
 			this->val = vval; 
 			this->key = kkey; 
 			this->marked = mmarked;
+			this->end = iend; 
 
 
 		}
@@ -59,16 +61,38 @@ public:
 	}
 
 	}
+//Node(Node* nnext, T vval, bool mmarked, bool iend) {
 
 	void insert(T val) {
 
 		Node* temp = head; 
-
-		while (temp->next == NULL) {
-
-
+		//Empty list 
+		if (head == NULL) {
+			head = 	new Node(NULL, val,false,true);
 		}
+		
+		//One element
+		else if (head->next == NULL) {
+			head->end = false; 
+			Node* temp = new Node(NULL, val, false, true)
+			head->next = temp; 
+			
+		}
+		
+		//Arbitrary Number of elements
+		else {
 
+
+			while (temp->next != NULL) {
+				continue;
+
+
+
+			}
+			temp->marked = false;
+			Node* curr = new Node(NULL, val, false, true);
+			temp->next = curr; 
+		}
 
 	}
 
