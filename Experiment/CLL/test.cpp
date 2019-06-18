@@ -1,5 +1,6 @@
 #include "cll.h"
 #include "Heap.h"
+#include "sort.h"
 //#include <iostream>
 
 using namespace std;
@@ -43,20 +44,57 @@ int main() {
 	Heap heapt; 
 	heapt.print();
 	cout << endl;
-	cout << "------------";
+	//cout << "------------";
 	heapt.insert(4);
 	heapt.insert(5);
 	cout << endl; 
 	heapt.print();
 	cout << endl; 
 	cout << heapt.contains(4);
-	cout << "-------------------------";
+	//cout << "-------------------------";
 	heapt.remove();
 	cout << endl; 
-	cout << "--------------------------------------------------------------";
+	//cout << "--------------------------------------------------------------";
 	cout << endl; 
     heapt.print();
+	heapt.insert(3);
+	heapt.insert(3);
+	heapt.insert(3);
+	heapt.insert(3);
+	heapt.insert(4);
+	//Proper Resize Working
+	cout << endl; 
+	heapt.print();
+	cout << endl; 
+	cout << "_------------------------------";
+	cout << endl; 
+	cout << "Begin Sort";
+	sort st; 
+	st.insert(4);
+	st.print();
+	cout << "test" << endl; 
+	st.insert(5);
+	cout << "test" << endl;
+	st.print();
+	st.insert(2);
+	st.insert(1);
+	st.insert(88);
+	st.insert(9);
+	cout << endl; 
+	st.contains(88);
+	cout << endl; 
 
+	st.remove(88);
+	st.print();
+	cout << endl; 
+
+
+
+
+
+
+	cout << "--------------------------------------------------------------------------";
+	cout << endl; 
 	//system("pause");
 	return 0;
 }
