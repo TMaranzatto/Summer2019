@@ -1,4 +1,5 @@
 #include "cll.h"
+#include "Heap.h"
 //#include <iostream>
 
 using namespace std;
@@ -35,6 +36,27 @@ int main() {
 	test.remove();
 	cout << endl; 
 	test.print();
+	cout << endl; 
+	cout << "-------------------------------------------------------------------";
+	cout << endl << endl << endl; 
+	cout << "Begin Heap";
+	Heap heapt; 
+	heapt.print();
+	cout << endl;
+	cout << "------------";
+	heapt.insert(4);
+	heapt.insert(5);
+	cout << endl; 
+	heapt.print();
+	cout << endl; 
+	cout << heapt.contains(4);
+	cout << "-------------------------";
+	heapt.remove();
+	cout << endl; 
+	cout << "--------------------------------------------------------------";
+	cout << endl; 
+    heapt.print();
+
 	//system("pause");
 	return 0;
 }
