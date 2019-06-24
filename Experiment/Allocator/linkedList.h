@@ -1,9 +1,6 @@
 //Created by Nick Stone and Thomas Maranzatto 
-
 //Concurrent single linked link list. 
-
 //Assuming all values are unique
-
 //Created on 6/17/2019
 
 
@@ -25,14 +22,14 @@ using namespace std;
 class linkedList {
 
 private:
-
+	//Node[];
 	struct Node {
-		void* next;
+		Node* next;
 		int val;
 		//int key; 
 		//bool marked;
 		bool end;
-		Node(void* nnext, int vval, bool iend) {
+		Node(Node* nnext, int vval, bool iend) {
 			this->next = nnext;
 			this->val = vval;
 			//this->key = kkey;
@@ -44,12 +41,13 @@ private:
 
 
 	};
-	void* head;
+	Node* head;
 	salloc s; 
 
 
 
 public:
+	
 
 	linkedList() {
 		head = NULL;
@@ -58,8 +56,8 @@ public:
 
 	~linkedList() {
 		if (head) {
-			void* lead = head->next;
-			void* follow = head;
+			Node* lead = head->next;
+			Node* follow = head;
 			while (lead) {
 				s.freeNode(follow);
 				
@@ -70,47 +68,71 @@ public:
 			s.freeNode(follow);
 		}
 	}
-
-
+	
 	//Node(Node* nnext, T vval, bool mmarked, bool iend) {
-
 	void insert(int vall) {
-
-		void* temp = head;
+		Node sa(NULL, vall, true);
+		//cout << sa.val;
+		
+		//cout << endl; 
+		//cout << &sa;
+		//cout << sa->val;
+		//cout << vall; 
+		//cout << "Hello";
+		//cout << head << "THIS IS THE VALUE OF HEAD"; 
+		//cout << endl; 
+		Node* temp = NULL;
+		temp = head; 
+		//cout << head; 
 		//Empty list 
+		
 		if (head == NULL) {
+		
+			head= static_cast <Node*>(s.createNode(sizeof(sa)));
 			
+			//cout << &head; 
+			//cout << endl; 
+			//cout << &sa; 
+			//cout << endl; 
+
+			head = &sa;
+			//sa = head; 
+			cout << head->val << "HEAD VALUE"; 
+			cout << endl; 
 			
-			head = new Node(NULL, vall,  true);
+			//cout << sa.val;
+			//cout << endl; 
+			//cout << endl;
+			//cout << head;
+			//cout << endl; 
+			//cout << &sa;
+			//sa = head; 
+		
 		}
 
 		//One element
 		else if (head->next == NULL) {
 			head->end = false;
-			void * temp = s.createNode(sizeof(struct Node(NULL,vall,true)));
+	
+			Node * t = static_cast <Node*>(s.createNode(sizeof(sa)));
 			//Node* t = &temp;
-
+			//t = temp; 
 
 			//Points the memory address to the Location of the given Node 
 			//THE only error is because Void * != Node 
 
 			//Finding a way to cast next
 
-			temp = Node l(NULL, vall, true);
-			
-			
-			
+			temp = &sa;
 			//Node l(NULL,vall,true); 
-
 			//Node* temp = new Node(NULL, vall,  true);
 			head->next = temp;
-
+			cout << head->val; 
+			cout << endl; 
+			cout << head->val; 
 		}
-
 		//Arbitrary Number of elements
 		else {
-
-
 			while (temp->next != NULL) {
 				continue;
 
@@ -118,10 +140,18 @@ public:
 
 			}
 			//temp->marked = false;
-			void* curr = new Node(NULL, vall, true);
+			//
+			//
+			//
+			//
+			//
+			//cout << head->val; 
+			Node* curr = static_cast <Node*>(s.createNode(sizeof(sa)));
+			curr = &sa;
 			temp->next = curr;
 		}
-
+		//cout << endl;
+		//cout << head->val;
 	}
 	/*
 	void mark(int vall, bool mmar) {
@@ -159,7 +189,7 @@ public:
 			head = NULL;
 		}
 		else {
-			void* temp = head->next;
+			Node* temp = head->next;
 			s.freeNode(head);
 			
 			head = temp;
@@ -168,23 +198,21 @@ public:
 
 
 	}
-
 	void print() {
-		void* temp = head; 
-		
+		Node* temp = head; 
+		//cout << head->val;
+
+
+		cout << endl; 
+	
 		while (temp != NULL) {
 			cout << temp->val;
 			cout << endl; 
 			temp = temp->next; 
-
-
 		}
-
-
 	}
-
 	bool search(int value) {
-		void* temp = head;
+		Node* temp = head;
 		//bool marked[1] = { false };
 		if (head == NULL) {
 			return false;
@@ -197,10 +225,7 @@ public:
 			
 			else {
 				temp = temp->next;
-
-
 			}
-
 		}
 		return false;
 	}
