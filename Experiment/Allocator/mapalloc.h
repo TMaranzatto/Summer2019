@@ -2,6 +2,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <queue>
+#include <sys/mman.h>
+
 
 using namespace std;
 
@@ -10,6 +12,16 @@ class mapalloc {
 
 private:
 	struct allocator {
+		void* ad; 
+		size_t len; 
+		int pro; 
+		int flags; 
+		int fd; 
+		off_t offset;
+		
+		
+		
+		
 		void* base;
 		size_t regionsize;
 		size_t next;
@@ -28,13 +40,32 @@ private:
 
 		}
 
-		allocator(size_t heap_size) {
-			regionsize = heap_size;
-			next = 0;
-			blocks = 0;
-			base = malloc(heap_size);
+
+		//Takes in all of the Parameters for a file to be Memory Mapped
+
+		allocator(void* aadr, size_t ilength, int iprot, int iflags, int ifd, off_t ioffset) {
+			ad = aadr; 
+			len = ilength;
+			pro = iprot; 
+			fd = ifd; 
+			offset = ioffset; 
+
+			
 
 
+
+			//regionsize = heap_size;
+			//next = 0;
+			//blocks = 0;
+			//base = malloc(heap_size);
+
+
+
+		}
+		void map() {
+
+		}
+		void unmap() {
 
 		}
 
