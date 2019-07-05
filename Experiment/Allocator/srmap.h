@@ -22,16 +22,17 @@ class srmap {
 			Node* next;
 			void* data; 
 			bool inuse;
-
+			size_t Allocsize; 
 
 			//int val;
 			//int key; 
 			//bool marked;
 			bool end;
-			Node(Node* nnext, void* id ,bool iuse,  bool iend) {
+			Node(Node* nnext, void* id ,bool iuse, size_t s, bool iend) {
 				this->next = nnext;
 				this->data = id;
 				this->inuse = iuse; 
+				this->Allocsize = s; 
 				//this->key = kkey;
 				//this->marked = mmarked;
 				this->end = iend;
@@ -89,18 +90,18 @@ class srmap {
 
 		//Node(Node* nnext, T vval, bool mmarked, bool iend) {
 
-		void insert(void * vall) {
-
+		void insert(void * vall, size_t insize) {
+			
 			Node* temp = head;
 			//Empty list 
 			if (head == NULL) {
-				head = new Node(NULL, vall,true,  true);
+				head = new Node(NULL, vall,true, insize,  true);
 			}
 
 			//One element
 			else if (head->next == NULL) {
 				head->end = false;
-				Node* temp = new Node(NULL, vall,true, true);
+				Node* temp = new Node(NULL, vall,true,insize,  true);
 				head->next = temp;
 
 			}
@@ -116,7 +117,7 @@ class srmap {
 
 				}
 				//temp->marked = false;
-				Node* curr = new Node(NULL, vall,true, true);
+				Node* curr = new Node(NULL, vall,true,insize, true);
 				temp->next = curr;
 			}
 			count = count + 1; 
@@ -173,6 +174,9 @@ class srmap {
 
 			while (temp != NULL) {
 				cout << temp->data;
+				cout << endl; 
+				cout << "Size of " << temp->Allocsize;
+				cout << endl; 
 				cout << endl;
 				temp = temp->next;
 
@@ -230,7 +234,27 @@ class srmap {
 			//return temp; 
 		}
 
-		void free() {
+		void free(void * stemp) {
+			Node* temp = head; 
+			if (head == NULL) {
+				cout << "List is empty nothing to free";
+
+			}
+			else {
+
+				while (temp != NULL) {
+					if (temp->data == stemp) {
+						temp->inuse = false; 
+						cout << "WE FOUND IT " << endl;
+						break;
+					}
+					else {
+
+						temp = temp->next;
+					}
+				}
+
+			}
 
 			/*
 			
