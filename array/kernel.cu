@@ -1,4 +1,4 @@
-#include <cstddef>;
+#include <cstddef>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
@@ -25,7 +25,7 @@ void get(int* array, unsigned long long int* bitmap) {
 		unsigned long long int i = (blockIdx.x * blockDim.x + threadIdx.x + i) % 64;
 		unsigned long long int loc = 1 << i;
 
-		unsigned long long int previousValue = atomicOr(&bitmap, loc);
+		unsigned long long int previousValue = atomicOr(bitmap, loc);
 		if ((previousValue >> i) & 1 == 0) {
 			//do something with the value
 			flag = 1;
@@ -51,6 +51,5 @@ int main(void) {
 	}
 
 	get<<<1, 256 >>>(arr, bitmap);
-
 
 }
