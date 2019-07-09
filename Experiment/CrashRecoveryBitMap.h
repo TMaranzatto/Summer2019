@@ -33,15 +33,17 @@ public:
 	}
 
 	~CrashRecoveryBitMap() {
-
+		
+		
+		//delete(test);
 		//Idk 
 
 
 	}
 	//Take something in and rebuild the bit map
-	void recover(void* test, size_t s) {
+	void recover(void* testss, size_t s) {
 		//Take in a Void * 
-
+		test[s] = true; 
 		
 
 		//Take a Size 
@@ -57,15 +59,17 @@ public:
 
 	//Returns the position in the bit array that is next to be allocated
 	int nextfit() {
+		int temp = nextfits; 
 		if (nextfits == false) {
 			for (int i = nextfits; i < test.size(); i++) {
 				if (test[i] == false) {
 					nextfits = i; 
+					break;
 				}
 
 			}
 
-			return nextfits; 
+			return temp; 
 
 		}
 		for (int i = nextfits; i < test.size(); i++) {
@@ -78,11 +82,6 @@ public:
 
 
 		}
-
-
-	}
-
-	int bestfit(int start, int finish) {
 
 
 	}
@@ -106,13 +105,26 @@ public:
 		int start = 0; 
 		int temp = 0; 
 		for (int i = 0; i < test.size(); i++) {
+			temp = 0; 
 			if (test[i] == false) {
+				start = i; 
 				
-				
-				for (int j = 0; j < test.size(); j++) {
+				for (int j = i; j < test.size(); j++) {
+					if (temp == num) {
+						return start; 
+						//break; 
+					}
+					else if (test[j] == false) {
+						temp = temp + 1; 
+					}
+					else {
 
-
+						break;
+					}
+					
 				}
+				continue; 
+				
 
 
 			}
@@ -120,7 +132,7 @@ public:
 
 		}
 
-
+		cout << "not enough room to allocate";
 
 	}
 
