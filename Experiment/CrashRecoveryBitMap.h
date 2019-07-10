@@ -12,6 +12,9 @@ class CrashRecoveryBitMap {
 private: 
 
 	vector<bool> test;
+	//Finished
+	size_t totalSizeHeap; 
+	//Finished
 	int nextfits;
 	void* start; 
 
@@ -21,7 +24,8 @@ public:
 
 	CrashRecoveryBitMap(size_t s, void* instart) {
 		nextfits = 0; 
-		for (int i = 0; i < s; i++) {
+		totalSizeHeap = s; 
+		for (int i = 0; i < 64; i++) {
 			test.push_back(false);
 
 
@@ -41,6 +45,40 @@ public:
 
 	}
 	//Take something in and rebuild the bit map
+	void recovery(vector<size_t> sg, vector<void*> ggg) {
+		
+		int offset = 64 * 32000; 
+
+		for (int i = 0; i < ggg.size(); i++) {
+			int temp = (int)ggg[i];
+			int space = temp / offset; 
+			test[space] = true; 
+			cout << space << endl;
+
+
+		}
+
+		//int temp = (int)start; 
+		//int n = ggg.size();
+		//int help = (int)ggg[n-1];
+		//int t = (int)ggg[1];
+
+		//long letssee = help - temp;
+		//cout << letssee; 
+		//long ff = temp - t; 
+
+		cout << endl; 
+		//cout << ff; 
+
+		for (int i = 0; i < sg.size(); i++) {
+
+			totalSizeHeap += sg[i];
+
+		}
+
+	}
+
+
 	void recover(void* testss, size_t s) {
 		//Take in a Void * 
 		test[s] = true; 

@@ -42,9 +42,15 @@ int main() {
 	size_t t = 8;
 	void* tt = Testing.malloc(t);
 	void* ttt = malloc(t);
+	void* tttt = &ttt + 1;
+	cout << endl; 
+
+	cout << "HERE IT IS " << endl; 
+	cout << tttt; 
+	
 	//void* tt = malloc(sizeof(t)); 
 	//void* ttt = malloc(t);
-	CrashRecoveryBitMap m(t,tt); 
+	CrashRecoveryBitMap m(sa,tfds); 
 	cout << endl; 
 
 	//cout << tt; 
@@ -82,10 +88,28 @@ int main() {
 
 
 	}
-	cout << "_________________________________" << endl; 
+
+	cout << "_______________________________" << endl; 
 	cout << endl; 
 
 	Testing.print();
+	int g = (int)holdptrs[1];
+	int f = 64 * 32000; 
+	int gg = g / f; 
+	cout << endl; 
+	cout << g; 
+	cout << endl; 
+	cout << endl; 
+	m.recovery(holdsizes, holdptrs);
+	cout << endl; 
+	cout << endl; 
+	cout << "88888888888888888888";
+	cout << endl; 
+	//cout << gg; 
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+	m.print();
 	//cout << "Program Terminated";
 	//int dd = 5; 
 	//size_t sdd = sizeof(dd);
