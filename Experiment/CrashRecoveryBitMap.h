@@ -13,6 +13,7 @@ private:
 
 	vector<bool> test;
 	//Finished
+	vector<bool> testing1;
 	size_t totalSizeHeap; 
 	//Finished
 	int nextfits;
@@ -95,15 +96,28 @@ public:
 	}
 
 	vector<bool> realrecover(void * Arena, size_t arenaoffset,size_t arenasize) {
-		
+		void* temp = &Arena; 
 		int loopit = (arenasize / arenaoffset);
 		for (int i = 0; i < loopit; i++) {
+			temp = &temp +  arenaoffset; 
+			
+
+			bool flag = (bool)temp; 
+			if (temp == false) {
+				testing1[i] = false;
 
 
+			}
+			else {
+
+
+				testing1[i] = true;
+			}
 
 
 
 		}
+		return testing1; 
 
 		//Take in a size IE an arena of memory 
 
@@ -235,20 +249,21 @@ public:
 
 	}
 
-	/*
-		What should this program do? 
-		Functions: 
+	
+	void print1() {
 
-		Recover the Data 
+		int count = 0;
+		for (int i = 0; i < testing1.size(); i++) {
 
-		Namely Build or Rebuild the bit map according the linked list that is taken in 
+			cout << testing1.at(i);
+			cout << endl;
+			count = i;
 
-		Return the Next Fit Position in the array 
+		}
+		cout << endl << count;
 
-		Update the array When the Linked list is updated
-		 	
-	*/
 
+	}
 
 
 

@@ -100,7 +100,7 @@ int main() {
 	cout << g; 
 	cout << endl; 
 	cout << endl; 
-	m.recovery(holdsizes, holdptrs);
+	//m.recovery(holdsizes, holdptrs);
 	cout << endl; 
 	cout << endl; 
 	cout << "88888888888888888888";
@@ -110,6 +110,60 @@ int main() {
 	cout << endl; 
 	cout << endl; 
 	m.print();
+
+
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+
+
+	void* vptrs = &ttt + 100; 
+
+
+	void* Uvptrs = malloc(10);
+	void* nuptrs = &Uvptrs + 1; 
+	cout << endl; 
+	cout << &nuptrs + 10; 
+	cout << endl; 
+
+	void* fff = &nuptrs + 10;
+	cout << (int)fff; 
+	cout << endl; 
+	int* iptr = (int*)fff;
+	cout << *iptr << " Testing this new iptr";
+	
+	cout << endl; 
+	cout << INT_MIN; 
+	int* tiptr = (int*)Uvptrs; 
+	cout << endl;
+	cout << tiptr << "SHould be some value stored here"; 
+	cout << endl; 
+	cout << "What i Want to know ";
+	cout << fff; 
+	cout << "Gotta know";
+
+
+	cout << endl; 
+	cout << endl; 
+	cout << Uvptrs; 
+	cout << endl; 
+	cout << nuptrs; 
+
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+
+	cout << "_____________________" << endl; 
+	void* arena = malloc(80);
+	size_t of = 4; 
+	size_t max = 80;
+	vector<bool> hehe = m.realrecover(arena, of, max);
+	m.print1();
+
+
+
 	//cout << "Program Terminated";
 	//int dd = 5; 
 	//size_t sdd = sizeof(dd);
