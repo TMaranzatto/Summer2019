@@ -25,7 +25,7 @@ public:
 	CrashRecoveryBitMap(size_t s, void* instart) {
 		nextfits = 0; 
 		totalSizeHeap = s; 
-		for (int i = 0; i < 64; i++) {
+		for (int i = 0; i < 128; i++) {
 			test.push_back(false);
 
 
@@ -47,7 +47,7 @@ public:
 	//Take something in and rebuild the bit map
 	void recovery(vector<size_t> sg, vector<void*> ggg) {
 		
-		int offset = 64 * 32000; 
+		int offset = 128 * 1024; 
 
 		for (int i = 0; i < ggg.size(); i++) {
 			int temp = (int)ggg[i];
@@ -89,6 +89,32 @@ public:
 		//First round is trivial if a Node exists in the next link in the chain from the List
 
 		//Slap a 1 
+
+
+
+	}
+
+	vector<bool> realrecover(void * Arena, size_t arenaoffset,size_t arenasize) {
+		
+		int loopit = (arenasize / arenaoffset);
+		for (int i = 0; i < loopit; i++) {
+
+
+
+
+
+		}
+
+		//Take in a size IE an arena of memory 
+
+		//Loop through 
+
+
+		//Find all allocated blocks 
+
+		//Print 1 or 0 1 true - 0 false
+
+
 
 
 
