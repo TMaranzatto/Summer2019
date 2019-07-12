@@ -128,10 +128,6 @@ public:
 
 		//Print 1 or 0 1 true - 0 false
 
-
-
-
-
 	}
 
 

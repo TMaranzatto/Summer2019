@@ -1,6 +1,7 @@
 #include <iostream>
 #include "CrashRecoveryBitMap.h"
 #include "srmap.h"
+#include "bitmaps.h"
 #include <vector>
 
 using namespace std; 
@@ -155,11 +156,17 @@ int main() {
 	cout << endl; 
 	cout << endl; 
 
+	
+
+	cout << endl; 
+	cout << f; 
+
+
 	cout << "_____________________" << endl; 
 	void* arena = malloc(80);
 	size_t of = 4; 
 	size_t max = 80;
-	vector<bool> hehe = m.realrecover(arena, of, max);
+	//vector<bool> hehe = m.realrecover(arena, of, max);
 	m.print1();
 
 
