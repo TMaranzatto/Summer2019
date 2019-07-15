@@ -17,10 +17,14 @@ int main() {
 		f[i] = new foo();
 		cout << f[i] << endl; 
 	}
+	cout << "Delete now";
 	for (int i = 0; i < arraysize; i++) {
 		delete f[i];
+		cout << "Delete" << endl;
+		cout << i; 
 
 	}
+	cout << "Finish Delete";
 
 	return 0; 
 
