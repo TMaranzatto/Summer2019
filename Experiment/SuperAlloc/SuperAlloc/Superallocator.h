@@ -50,23 +50,18 @@ public:
 
 
 	}
-
-
 	//Arena Allocator
-
-
-
 	void_star allocate(size_type s) {
 		//numallocations += 1; 
 		Arena* e;
 		if (!next_Arena) {
-			size_t chunk = num_chunk + s;
+			size_type chunk = num_chunk + s;
 			next_Arena = e = reinterpret_cast<Arena*> (malloc(chunk));
-			for (int i = 0; i < num_chunk+1; i++)
+			for (int i = 0; i < num_chunk; i++)
 			{
-				e->next = reinterpret_cast<Arena*>(reinterpret_cast<char*>(e) + s);
+				e->next = reinterpret_cast<Arena*>(reinterpret_cast<pointer>(e) + s);
 				e = e->next;
-
+				cout << e << endl; 
 
 			}
 			e->next = nullptr;
@@ -238,7 +233,7 @@ private:
 	};
 	BM* bitmaps = nullptr;
 	Arena* next_Arena = nullptr;
-	static const size_type num_chunk = 4;
+	static const size_type num_chunk = 30;
 	void_star start; 
 	size_type HeapSize;
 	size_type nexts; 
