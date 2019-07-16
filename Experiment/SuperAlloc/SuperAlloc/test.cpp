@@ -1,18 +1,16 @@
 #include <iostream>
-#include "Superallocator.h"
+#include "MegaAlloc.h"
 #include <conio.h> //for getch()
 using namespace std; 
 
-/*
+
 int main() {
 
-	Superallocator<int> s; 
+	MegaAlloc<int> s; 
 
 	//s.operator new(sizeof(4));
 	//ss.operator new(sizeof(5));
-	s.allocate(sizeof(4));
-	s.allocate(sizeof(5));
-	s.print();
+	//cout << s.getchunk();
 
 	cout << "here we are";
 
@@ -22,4 +20,4 @@ int main() {
 
 
 	//return 0; 
-}*/
+}
