@@ -82,15 +82,25 @@ public:
 
 	}
 
+
+	/*
 	findholes(size_type needbig , atomic_uint64_t a ) {
 		atomic_uint64_t temporary = a;
+		string hold = "";
+		for (int i = 0; i < needbig; i++) {
+
+			hold = hold + "0";
+
+		}
+
+		cout << hold; 
 
 
 
 
 
 	}
-
+	*/
 	
 	//Bitallocate -> individually allocates based on bitmap..
 	void_star bitallocate(size_type needbig) {
@@ -128,7 +138,7 @@ public:
 					}
 
 				}
-				if (memoryallocated == false{
+				if (memoryallocated == false){
 					allocate();
 				}
 			}

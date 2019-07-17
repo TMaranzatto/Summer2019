@@ -33,10 +33,37 @@ int main() {
 	cout << endl; 
 
 	//cout << "Finished";
+	string hi = "hello world";
+	int test = hi.find(" ");
+	cout << test; 
+
+	size_t needbig = 4; 
+	string hold = "";
+	string whynot = "100001";
+	string nhold = "";
+	for (int i = 0; i < needbig; i++) {
+
+		hold = hold + "0";
+		nhold = nhold + "1";
+	}
+
+	cout << hold;
+
+	int pos = whynot.find(hold);
+	whynot.substr();
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+	cout << pos; 
+
+
+
+
+
 
 
 	return 0; 
-
+	
 	
 	
 
