@@ -15,7 +15,7 @@ int main() {
 	int a = 19;
 	
 
-	s.bitallocate(sizeof(a));
+	void * fds = s.bitallocate(sizeof(a));
 	//s.allocate();
 	//cout << "here we are";
 	cout << endl; 
@@ -24,13 +24,13 @@ int main() {
 	s.print();
 	cout << endl; 
 	cout << s.getchunk() << endl;
-	cout << s.getarenas();
+	//cout << s.getarenas();
 	cout << endl; 
 	cout << endl; 
 	cout << endl; 
 
 	//cout << "Finished";
-
+	cout << fds; 
 
 	
 	//cout << endl; 

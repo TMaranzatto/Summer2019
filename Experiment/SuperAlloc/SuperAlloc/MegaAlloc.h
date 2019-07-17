@@ -33,16 +33,16 @@ private:
 		atomic_flag lock;
 		//Needs to hold a number of U int ptrs equal to the bytes that each region holds 
 		//For only 64 bytes
-		atomic_uint64_t map;
+		uint64_t map;
 		//for 128 Bytes
-		atomic_uint64_t map1;
+		uint64_t map1;
 		
-		atomic_uint64_t map2;
-		atomic_uint64_t map3;
-		atomic_uint64_t map4;
-		atomic_uint64_t map5;
-		atomic_uint64_t map6;
-		atomic_uint64_t map7;
+		uint64_t map2;
+		uint64_t map3;
+		uint64_t map4;
+		uint64_t map5;
+		uint64_t map6;
+		uint64_t map7;
 	};
 	//For the overall program
 	void_star start;
@@ -76,17 +76,18 @@ public:
 	}
 
 
-	void_star lowlevelalloc(size_type posstart, size_type big, void_star arenast) {
+	void_star lowlevelalloc(size_type posstart, size_type thisbig, void_star arenast) {
 
 		void_star newplace= &arenast + posstart;
-		newplace = newplace + big; 
+		newplace = &newplace + thisbig;
 		return newplace; 
 
 	}
 
-	bool hasroom(atomic_uint64_t s , size_type big) {
+	bool hasroom(uint64_t s , size_type big) {
 		string temp = "";
-		string t = toBinary(s);
+		uint64_t forr = s; 
+		string t = toBinary(forr);
 
 		for (int i = 0; i < big; i++) {
 
@@ -106,7 +107,7 @@ public:
 
 	
 	size_type findholes(size_type needbig , Arena* e, int maps ) {
-		atomic_uint64_t temporary; 
+		uint64_t temporary; 
 		string hold = "";
 		string nhold = "";
 		if (maps == 0) {
@@ -148,6 +149,7 @@ public:
 
 
 			size_type pos = s.find(hold);
+			s = s.replace(pos, needbig, nhold);
 			//Send String to be uint
 				//Set map to be new uint
 			if (maps == 0) {
@@ -180,7 +182,7 @@ public:
 				e->map7 = stoin(s);
 
 			}
-			s = s.replace(pos, needbig, nhold);
+			
 			return pos; 
 
 		}
@@ -188,7 +190,7 @@ public:
 		//cout << hold; 
 	}
 
-	atomic_uint64_t stoin(string s) {
+	uint64_t stoin(string s) {
 
 		return stoi(s, nullptr, 2);
 	}
@@ -476,6 +478,7 @@ public:
 		chunk = 64; 
 		Head_Arena = NULL; 
 		Next_Arena = NULL; 
+
 		//allocate();
 		//start = Head_Arena->startarena; 
 		//Call Allocate 
@@ -503,7 +506,8 @@ public:
 			
 			cout << temp->startarena << " WIth the position in the linked list as " << count << endl; 
 			count = count + 1; 
-			cout << temp->map << endl;
+			//cout << temp->map << endl;
+			cout << "Map Looks like this";
 			cout << toBinary(temp->map);
 			//cout << count << endl; 
 			//cout << endl; 
