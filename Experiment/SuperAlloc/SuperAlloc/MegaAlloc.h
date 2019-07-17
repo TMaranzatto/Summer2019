@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <stdlib.h>
 #include <atomic>
+#include <string>
 //Need to include Uinptrs
 #include <cstdint>
 
@@ -74,6 +75,7 @@ public:
 		return retval;
 	}
 
+
 	void_star lowlevelalloc(size_type posstart, size_type big, void_star arenast) {
 
 		void_star newplace= &arenast + posstart;
@@ -82,25 +84,272 @@ public:
 
 	}
 
+	bool hasroom(atomic_uint64_t s , size_type big) {
+		string temp = "";
+		string t = toBinary(s);
 
-	/*
-	findholes(size_type needbig , atomic_uint64_t a ) {
-		atomic_uint64_t temporary = a;
-		string hold = "";
-		for (int i = 0; i < needbig; i++) {
+		for (int i = 0; i < big; i++) {
 
-			hold = hold + "0";
+			temp = temp + "0";
+
 
 		}
+		if (t.find(temp) == -1) {
 
-		cout << hold; 
+			return false; 
+		}
+		return true; 
 
+
+
+	}
+
+	
+	size_type findholes(size_type needbig , Arena* e, int maps ) {
+		atomic_uint64_t temporary; 
+		string hold = "";
+		string nhold = "";
+		if (maps == 0) {
+			 temporary = e->map;
+		}
+		else if (maps == 1) {
+			temporary = e->map1;
+		}
+		else if (maps == 2) {
+			temporary = e->map2;
+
+		}
+		else if (maps == 3) {
+			temporary = e->map3;
+		}
+		else if (maps == 4) {
+			temporary = e->map4;
+		}
+		else if (maps == 5) {
+			temporary = e->map5;
+		}
+		else if (maps == 6) {
+			temporary = e->map6;
+		}
+		else {
+			temporary = e->map7;
+		}
+
+		for (int i = 0; i < needbig; i++) {
+			hold = hold + "0";
+			nhold = nhold + "1";
+		}
+		string s = toBinary(temporary);
+		if (s.find(hold) == -1) {
+			cout << "Not available";
+			return -1; 
+		}
+		else {
+
+
+			size_type pos = s.find(hold);
+			//Send String to be uint
+				//Set map to be new uint
+			if (maps == 0) {
+				e->map = stoin(s);
+			}
+			else if (maps == 1) {
+				e->map1 = stoin(s);
+
+			}
+			else if (maps == 2) {
+				e->map2 = stoin(s);
+
+			}
+			else if (maps == 3) {
+				e->map3 = stoin(s);
+
+			}
+			else if (maps == 4) {
+				e->map4 = stoin(s);
+			}
+			else if (maps == 5) {
+				e->map5 = stoin(s);
+
+			}
+			else if (maps == 6) {
+				e->map6 = stoin(s);
+
+			}
+			else {
+				e->map7 = stoin(s);
+
+			}
+			s = s.replace(pos, needbig, nhold);
+			return pos; 
+
+		}
+		//int pos = a.find(hold);
+		//cout << hold; 
+	}
+
+	atomic_uint64_t stoin(string s) {
+
+		return stoi(s, nullptr, 2);
+	}
+
+	
+	
+	void_star hub(Arena* e, size_type needbig) {
+		
+		if (e->Arenasize == 64) {
+			//map 1
+			if (hasroom(e->map, needbig) == true) {
+				size_type s = findholes(needbig, e, 0);
+				return lowlevelalloc(s, needbig, e->startarena);
+
+			}
+			else {
+
+				return NULL; 
+			}
+
+		}
+		else if (e->Arenasize == 128) {
+
+			if (hasroom(e->map, needbig) == true) {
+				size_type s = findholes(needbig, e, 0);
+				return lowlevelalloc(s, needbig, e->startarena);
+
+			}
+			else if (hasroom(e->map1, needbig) == true) {
+
+				size_type s = findholes(needbig, e, 1);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else {
+
+				return NULL;
+			}
+
+
+			//map 1 2 
+
+		}
+		else if (e->Arenasize == 256) {
+			// 1 2 3 4 
+			if (hasroom(e->map, needbig) == true) {
+				size_type s = findholes(needbig, e, 0);
+				return lowlevelalloc(s, needbig, e->startarena);
+				//Change the string and send back the position that the string starts at 
+				//Take the position the arena start, the size get the void star
+
+			}
+			else if (hasroom(e->map1, needbig) == true) {
+
+				size_type s = findholes(needbig, e, 1);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map2, needbig) == true) {
+				size_type s = findholes(needbig, e, 2);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map3, needbig) == true) {
+				size_type s = findholes(needbig, e, 3);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			
+			else {
+
+				return NULL;
+			}
+
+
+
+
+		}
+		else if (e->Arenasize == 512) {
+			if (hasroom(e->map, needbig) == true) {
+				size_type s = findholes(needbig, e, 0);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map1, needbig) == true) {
+				size_type s = findholes(needbig, e, 1);
+				return lowlevelalloc(s, needbig, e->startarena);
+
+			}
+			else if (hasroom(e->map2, needbig) == true) {
+				size_type s = findholes(needbig, e, 2);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map3, needbig) == true) {
+				size_type s = findholes(needbig, e, 3);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map4, needbig) == true) {
+				size_type s = findholes(needbig, e, 4);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map5, needbig) == true) {
+				size_type s = findholes(needbig, e, 5);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else {
+
+				return NULL;
+			}
+
+
+
+
+
+			// 1 2 3 4 5 6 
+		}
+		else if (e->Arenasize == 1024) {
+			if (hasroom(e->map, needbig) == true) {
+				size_type s = findholes(needbig, e, 0);
+				return lowlevelalloc(s, needbig, e->startarena);
+
+			}
+			else if (hasroom(e->map1, needbig) == true) {
+				size_type s = findholes(needbig, e, 1);
+				return lowlevelalloc(s, needbig, e->startarena);
+
+			}
+			else if (hasroom(e->map2, needbig) == true) {
+				size_type s = findholes(needbig, e, 2);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map3, needbig) == true) {
+				size_type s = findholes(needbig, e, 3);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map4, needbig) == true) {
+				size_type s = findholes(needbig, e, 4);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map5, needbig) == true) {
+				size_type s = findholes(needbig, e, 5);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map6, needbig) == true) {
+				size_type s = findholes(needbig, e, 6);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else if (hasroom(e->map7, needbig) == true) {
+				size_type s = findholes(needbig, e, 7);
+				return lowlevelalloc(s, needbig, e->startarena);
+			}
+			else {
+
+				return NULL;
+			}
+
+
+			//1 2 3 4 5 6 7 8
+		}
 
 
 
 
 	}
-	*/
+
+
 	
 	//Bitallocate -> individually allocates based on bitmap..
 	void_star bitallocate(size_type needbig) {
@@ -115,25 +364,15 @@ public:
 				//Traverse all arenas and find a suitable place
 				Arena* temp = Head_Arena; 
 				while (temp != NULL) {
-					if (temp->Arenasize == 64) {
-						//Search the map
-						//If found allocate
-						//If not temp = temp -> next
-
-					}
-					else if (temp->Arenasize == 128) {
-
-					}
-					else if (temp->Arenasize == 256) {
-
-					}
-					else if (temp->Arenasize == 512) {
-
+					void_star store = hub(temp,needbig);
+					if (store == NULL) {
+						//Failed
+						temp = temp->next; 
 
 					}
 					else {
-
-						//1024 Search all 
+						return store; 
+						//Success!
 
 					}
 
@@ -152,7 +391,7 @@ public:
 
 	Arena* arenainfo(Arena* temp) {
 		//Arenasize  =chunk /2
-		//ArenaStart = temp
+		//startarena = temp
 		temp->Arenasize = chunk / 2;
 		temp->startarena = temp;
 		//temp->maps = new int[chunk /2]; 
@@ -248,10 +487,7 @@ public:
 
 
 	}
-
 	//Allocate -> Calls Malloc and Sets a new Arena
-
-
 	void deallocate(void_star e, size_type s) {
 
 		reinterpret_cast<Arena*>(e)->next = Next_Arena;
@@ -275,25 +511,21 @@ public:
 			temp = temp->next; 
 		}
 		cout << "Finished";
-
-
-
 	}
 
-
-	/*
-	Allocator
-	Malloc
-	Free
-	Traverse
-	Arena
-	*/
-
-
-	/*
-	BitMap
+	void free(Arena* e) {
+		e->map = 0; 
+		e->map1 = 0;
+		e->map2 = 0;
+		e->map3 = 0;
+		e->map4 = 0;
+		e->map5 = 0;
+		e->map6 = 0;
+		e->map7 = 0;
+	}
 	
-	*/
+
+	
 	
 	//Bit map functions
 	string toBinary(const T& t)
