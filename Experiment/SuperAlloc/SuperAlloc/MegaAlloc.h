@@ -6,6 +6,7 @@
 #include <string>
 //Need to include Uinptrs
 #include <cstdint>
+#include <cmath>
 
 using namespace std;
 
@@ -153,33 +154,33 @@ public:
 			//Send String to be uint
 				//Set map to be new uint
 			if (maps == 0) {
-				e->map = stoin(s);
+				e->map = fromString(s);
 			}
 			else if (maps == 1) {
-				e->map1 = stoin(s);
+				e->map1 = fromString(s);
 
 			}
 			else if (maps == 2) {
-				e->map2 = stoin(s);
+				e->map2 = fromString(s);
 
 			}
 			else if (maps == 3) {
-				e->map3 = stoin(s);
+				e->map3 = fromString(s);
 
 			}
 			else if (maps == 4) {
-				e->map4 = stoin(s);
+				e->map4 = fromString(s);
 			}
 			else if (maps == 5) {
-				e->map5 = stoin(s);
+				e->map5 = fromString(s);
 
 			}
 			else if (maps == 6) {
-				e->map6 = stoin(s);
+				e->map6 = fromString(s);
 
 			}
 			else {
-				e->map7 = stoin(s);
+				e->map7 = fromString(s);
 
 			}
 			
@@ -190,9 +191,14 @@ public:
 		//cout << hold; 
 	}
 
-	uint64_t stoin(string s) {
-
-		return stoi(s, nullptr, 2);
+	uint64_t stoinss(string s) {
+		cout << "ERROR";
+		//cout << stoi(s, nullptr, 2);
+		int i = stoi(s, nullptr, 2);
+		//cout << i;
+		uint64_t so = i; 
+		cout << endl << so;
+		return so;
 	}
 
 	
@@ -543,6 +549,22 @@ public:
 		return s;
 	}
 
+	uint64_t fromString(string binaryString) {
+		uint64_t value = 0;
+		int indexCounter = 0;
+		for (int i = binaryString.length() - 1; i >= 0; i--)
+		{
+
+			if (binaryString[i] == '1')
+			{
+				value += pow(2, indexCounter);
+			}
+			indexCounter++;
+		}
+		return value; 
+
+
+	}
 
 
 
