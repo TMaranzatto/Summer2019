@@ -1,10 +1,9 @@
 #pragma once
 #include <iostream>
-//#include <cstddef>
+#include <cstddef>
 #include <list>
 #include <stdlib.h>
 #include <vector>
-
 
 using namespace std; 
 /*
@@ -61,7 +60,7 @@ public:
 			{
 				e->next = reinterpret_cast<Arena*>(reinterpret_cast<pointer>(e) + s);
 				e = e->next;
-				cout << e << endl; 
+				//cout << e << endl; 
 
 			}
 			e->next = nullptr;
@@ -115,6 +114,18 @@ public:
 
 		//return temp; 
 	}
+
+
+	void freeprint() {
+		Arena* temp = next_Arena;
+		while (temp != nullptr) {
+			free(temp);
+			
+			temp = temp->next;
+		}
+		cout << "FINISHED" << endl;
+	}
+
 
 	//END Arena Allocator
 	//Begin Bit Map
@@ -199,7 +210,7 @@ public:
 		Arena* temp = next_Arena; 
 		while (temp != nullptr) {
 
-			cout << temp << " HERO" << endl;
+			cout << temp << " " << endl;
 			temp = temp->next; 
 		}
 		cout << "FINISHED" << endl;
@@ -233,7 +244,7 @@ private:
 	};
 	BM* bitmaps = nullptr;
 	Arena* next_Arena = nullptr;
-	static const size_type num_chunk = 30;
+	static const size_type num_chunk = 20;
 	void_star start; 
 	size_type HeapSize;
 	size_type nexts; 
@@ -250,23 +261,25 @@ private:
 
 };
 
-
+/*
 int main() {
 
 	Superallocator<int> s;
 
 	//s.operator new(sizeof(4));
 	//ss.operator new(sizeof(5));
-	s.allocate(sizeof(4));
-	s.allocate(sizeof(5));
+	int a = 4; 
+	int b = 5; 
+	s.allocate(sizeof(a));
+	s.allocate(sizeof(b));
 	s.print();
-
+	//s.freeprint();
 	cout << "Mark Reached";
-
+	
 	//Exited with a code 3
-
+	cout << "Freed";
 
 
 
 	return 0; 
-}
+}*/

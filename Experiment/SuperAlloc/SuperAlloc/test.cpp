@@ -1,5 +1,6 @@
 #include <iostream>
 #include "MegaAlloc.h"
+#include "ultra.h"
 #include <conio.h> //for getch()
 #include <string>
 #include <cmath>
@@ -71,13 +72,16 @@ int main() {
 
 
 	cout << "-------------------------" << endl; 
+	cout << endl; 
+	cout << "START ULTRA" << endl; 
+	ultra<int> u; 
 
 
+	u.allocate();
+	u.allocate();
+	u.print();
 
-	uint64_t forfucks = 10; 
-
-	bitset<64> bitset1(forfucks);
-	cout << bitset1;
+	//forfucks = (uint64_t)bitset1; 
 
 
 
