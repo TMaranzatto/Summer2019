@@ -5,6 +5,7 @@
 #include <string>
 #include <cmath>
 #include <bitset>
+#include "superultra.h"
 using namespace std; 
 
 
@@ -24,7 +25,7 @@ int main() {
 	int strawman2 = 495;
 	int	strawman3 = 399; 
 	int strawman4 = 495; 
-
+	//size_t tempss = 43; 
 	void* dptr = s.bitallocate(sizeof(d));
 	void* straw = s.bitallocate(sizeof(strawman));
 	void * straw1  = s.bitallocate(sizeof(strawnan1));	
@@ -32,7 +33,7 @@ int main() {
 	void * straw3 = s.bitallocate(sizeof(strawman2));
 	void * straw4 = s.bitallocate(sizeof(strawman4));
 
-
+	//void* notes = s.bitallocate(tempss);
 	void * fds = s.bitallocate(sizeof(a));
 	//s.allocate();
 	void* letssee = s.bitallocate(sizeof(b));
@@ -73,26 +74,85 @@ int main() {
 
 	cout << "-------------------------" << endl; 
 	cout << endl; 
+	/*
 	cout << "START ULTRA" << endl; 
+
+
+	int fff = 10; 
+
 	ultra<int> u; 
 
+	void * trip = u.bitallocate(sizeof(fff));
+	
+	void* strip = u.bitallocate(10);
 
-	u.allocate();
-	u.allocate();
+
+	cout << endl; 
+	cout << trip; 
+	cout << endl; 
+	cout << endl; 
 	u.print();
+	cout << endl;
+	cout << endl; 
+	cout << strip; 
 
-	//forfucks = (uint64_t)bitset1; 
+	cout << endl;
+	cout << endl; 
+	cout << trip; 
+
+	//u.allocate();
+	//u.allocate();
+	//u.print();
+
+	cout << endl; 
+	cout << endl; 
+	cout << endl; 
+	*/
+	cout << endl; 
+	superultra<int> su; 
+	cout << "SRART SU SHOULD HAVE 1 ARENA" << endl;
 
 
+	int just = 10; 
+	int justs = 10;
+	int justss = 10;
+	int justsss = 10;
+	int jut = 10;
+	int juts = 10;
+	int jutss = 10;
+	int jutsss = 10;
+	size_t ff = 10; 
+	size_t fff = 10;
+	size_t ffff = 64; 
+	size_t lfs = 10; 
+
+	su.bitallocate(sizeof(just));
+	su.bitallocate(sizeof(justs));
+	su.bitallocate(sizeof(justss));
+	su.bitallocate(sizeof(justsss));
+	su.bitallocate(sizeof(jut));
+	su.bitallocate(sizeof(juts));
+	su.bitallocate(sizeof(jutss));
+	su.bitallocate(sizeof(jutsss));
+	su.bitallocate(ff);
+	su.bitallocate(fff);
+	su.bitallocate(ffff);
+	su.bitallocate(lfs);
+	void* tes = su.gethead();
 
 
+	//su.allocate();
+	su.deallocate(tes);
 
-
-
-
-
+	cout << endl; 
+	su.print();
 
 	cout << endl << "FINISH";
+
+
+
+
+
 
 
 

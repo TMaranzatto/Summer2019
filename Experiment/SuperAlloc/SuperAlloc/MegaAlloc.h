@@ -467,7 +467,7 @@ public:
 			//SEt Tail Not to HeadNode -> next
 			Head_Arena = e;
 			Head_Arena->next = NULL;
-			start = Head_Arena->startarena; 
+			start = Head_Arena; 
 			/*
 			Call Functions to Establish Node
 			*/
@@ -505,8 +505,7 @@ public:
 			cout << he << endl;
 			
 			Next_Arena -> next = he;
-			//Next_Arena->next = NULL;
-			//Next_Arena = Next_Arena->next;
+
 		}
 
 		//Function DOne

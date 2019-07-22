@@ -14,13 +14,13 @@ using namespace std;
 
 template <class T>
 
-class ultra {
+class superultra {
 
 public:
 	//Using mutex locks in order to start with the easiest concurrency
 
-	mutex mut; 
-	
+	mutex mut;
+
 	//Template variables Starting with the values that are supposed to be held by the class
 	using value_type = T;
 	using pointer = T *;
@@ -50,18 +50,7 @@ private:
 		atomic_flag lock;
 		//Needs to hold a number of bitsets ptrs equal to the bytes that each region holds 
 		//For only 64 bytes
-		bitset <64> map;
-		//for 128 Bytes
-		bitset <64> map1;
-		//256
-		bitset <64> map2;
-		bitset<64> map3;
-		//384
-		bitset<64> map4;
-		bitset<64> map5;
-		//512
-		bitset<64> map6;
-		bitset<64> map7;
+		pointer bitset; 
 	};
 	//For the overall program
 	void_star start;
@@ -89,11 +78,12 @@ public:
 
 	//These are a series of quick function calles mainly called getters or accessors
 	//These were used to make sure the proper data was being collected and used
-	int getnumallocs() { return count;  }
+	int getnumallocs() { return count; }
 	int getnumarenas() { return numarenas; }
 	int getarenas() { return numarenas; }
 	size_type getchunk() { return chunk; }
 	void_star getstart() { return start; }
+	Arena* gethead() { return Head_Arena; }
 	//End QUick Functions
 
 	//Malloc -> Moves the program counter 
@@ -138,40 +128,46 @@ public:
 	//in a row that will allow for an object to be allocated
 	// If it has room we return true
 	//if not enough room to allocate then we return false 
+	//////////////////////////////////////////////////////////////////
+	//Create the size we need
+		//check to see if any map has that many 0s
+	////////////////////////////////////////////////////////////////////
+	//Has Room
+	////////////////////////////////////////////////////////////////////
 
-	bool checkroomsss(bitset<64> traverse, size_type big) {
+	bool checkroom(Arena * temp, size_type big) {
 		//Set a flag and a counter to be false and 0
 		bool flag = false;
-		size_type counter = 0; 
+		size_type counter = 0;
 		//A double for loop in order to iterate through the bit map 
 		//We know the given bitmap size is 64
-		for (int i = 0; i < 64; i++) {
+		for (int i = 0; i <= temp->Arenasize; i++) {
 
 			//This inner loop is to check that there are enough positions in the list in order to allocate 
-			for (int j = 0; j < i; j++) {
+			for (int j = i; j <= temp-> Arenasize; j++) {
 
 				//If the count is equal to the size of the thing being allocated we have enough room and we can exit the program 
-				if (counter == big){
+				if (counter == big) {
 
 					flag = true;
 					return flag;
-					}
+				}
 				//New if chain we check the next spot in the array if its a 0 increment the counter
-				if (traverse[j] == 0)
+				if (temp->bitset[j] == 0)
 				{
 					//Increment counter by 1
-					counter += 1; 
+					counter += 1;
 
 				}
 				else {
 					//Reset the counter to 0
-					counter = 0; 
+					counter = 0;
 				}
 
 			}
-			
-			counter = 0; 
-		
+
+			counter = 0;
+
 		}
 		cout << "NO ROOM ";
 		//Traverse whole list and found nothing... Return false NO room to allocate
@@ -180,7 +176,11 @@ public:
 
 	}
 
+	////////////////////////////////////////////////////////////////////
 
+
+	//Swap 0s to 1s
+	//////////////////////////////////////////////////////////////////////
 
 	//This is designed to test a given map that belongs in a given arena
 	//However we know that some arenas of smaller size may only need 1 map to represent them 
@@ -190,62 +190,38 @@ public:
 	//And we return the position in the string that has the 0s
 	//If not then we return -1 meaning no room to allocate
 
-	size_type changemap(size_type needbig, Arena* e, int maps) {
-		bitset<64> temporary;
+	size_type changeset(size_type needbig, Arena* e) {
+	
 		size_type counter = 0;
-		size_type positionchanging = 0; 
+		size_type positionchanging = 0;
 
-		if (maps == 0) {
-			temporary = e->map;
-		}
-		else if (maps == 1) {
-			temporary = e->map1;
-		}
-		else if (maps == 2) {
-			temporary = e->map2;
-
-		}
-		else if (maps == 3) {
-			temporary = e->map3;
-		}
-		else if (maps == 4) {
-			temporary = e->map4;
-		}
-		else if (maps == 5) {
-			temporary = e->map5;
-		}
-		else if (maps == 6) {
-			temporary = e->map6;
-		}
-		else {
-			temporary = e->map7;
-		}
+	
 		bool flag = false;
-		bool flag2 = false; 
+		bool flag2 = false;
 		//int counter = 0; 
 		 //cout << endl; 
 		// cout << temporary << "TEMP HERE" ; 
 		// cout << endl;
 		while (flag == false) {
-			for (int i = 0; i < 64; i++) {
-				positionchanging = i; 
-				for (int j = positionchanging; j < 64; j++) {
+			for (int i = 0; i <= e->Arenasize; i++) {
+				positionchanging = i;
+				for (int j = positionchanging; j <= e->Arenasize; j++) {
 					//cout << temporary[j] << endl;
-					if (counter == needbig){
+					if (counter == needbig) {
 
 						flag = true;
-						flag2 = true; 
+						flag2 = true;
 						//i = 64; 
 						break;
 					}
-					else if (temporary[j] == 0)
+					else if (e->bitset[j] == 0)
 					{
-							//Increment counter by 1
+						//Increment counter by 1
 						counter += 1;
-						cout << counter;
+						//cout << counter;
 					}
 					else {
-							//Reset the counter to 0
+						//Reset the counter to 0
 						counter = 0;
 						break;
 					}
@@ -253,82 +229,41 @@ public:
 				if (flag2 == true) {
 					break;
 				}
-				
+
 
 				counter = 0;
 
 			}
-			cout << endl; 
+			cout << endl;
 			//cout << positionchanging << " positionchaning" << endl;
-			
+
 			//cout << "SHIP -1";
 			//return positionchanging; 
 		}
 		if (flag2 == false) {
 
-			positionchanging = -1; 
+			positionchanging = -1;
 
 		}
 		//scout << "WE GET HERE";
 		int space = positionchanging;
 		for (int i = 0; i < needbig; i++) {
-			
-			temporary[space] = 1; 
-			space = space + 1; 
+
+			e->bitset[space] = 1;
+			space = space + 1;
 		}
 		//cout << temporary;
 		//s = s.replace(pos, needbig, nhold);
 		//Send String to be uint
 				//Set map to be new uint
-			if (maps == 0) {
-				e->map = temporary;
-			}
-			else if (maps == 1) {
-				e->map1 = temporary;
+		return positionchanging;
 
-			}
-			else if (maps == 2) {
-				e->map2 = temporary;
 
-			}
-			else if (maps == 3) {
-				e->map3 = temporary;
-
-			}
-			else if (maps == 4) {
-				e->map4 = temporary;
-			}
-			else if (maps == 5) {
-				e->map5 = temporary;
-
-			}
-			else if (maps == 6) {
-				e->map6 = temporary;
-
-			}
-			else {
-				e->map7 = temporary;
-
-			}
-
-			return positionchanging;
-
-		
 		//int pos = a.find(hold);
 		//cout << hold; 
 	}
-	//////////////////////////////////////////////////////////////////
-	//Create the size we need
-		//check to see if any map has that many 0s
-		//Rewrite the new map 
 
-		//int pos = a.find(hold);
-		//cout << hold; 
-	
-
-
-	////////////////////////////////////////////////////////////////////
-
+	//////////////////////////////////////////////////////////////////////
 
 	//This hub function serves as the main function that controls the overall allocation process that is used by this program 
 	// We first check the arena size then based on the arena size we know how many maps need to be checked to see if therre is proper room
@@ -336,163 +271,15 @@ public:
 
 	void_star hub(Arena* e, size_type needbig) {
 
-		if (e->Arenasize == 64) {
-			//map 1
-			if (checkroomsss(e->map, needbig) == true) {
-				
-				size_type s = changemap(needbig, e, 0);
-				cout << endl; 
-				cout << endl; 
-				cout << "THIS IS THE S VAR" << endl; 
-				cout << s;
-				return lowlevelalloc(s, needbig, e->startarena);
 
-			}
-			else {
-				cout << endl; 
-				cout << 'NULL'; 
-
-				return NULL;
-			}
-
+		if (checkroom(e, needbig) == true) {
+			size_type s = changeset(needbig, e);
+			return lowlevelalloc(s, needbig, e->startarena);
 		}
-		else if (e->Arenasize == 128) {
+		else {
 
-			if (checkroomsss(e->map, needbig) == true) {
-				size_type s = changemap(needbig, e, 0);
-				return lowlevelalloc(s, needbig, e->startarena);
-
-			}
-			else if (checkroomsss(e->map1, needbig) == true) {
-
-				size_type s = changemap(needbig, e, 1);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else {
-
-				return NULL;
-			}
-
-
-			//map 1 2 
-
+			return NULL; 
 		}
-		else if (e->Arenasize == 256) {
-			// 1 2 3 4 
-			if (checkroomsss(e->map, needbig) == true) {
-				size_type s = changemap(needbig, e, 0);
-				return lowlevelalloc(s, needbig, e->startarena);
-				//Change the string and send back the position that the string starts at 
-				//Take the position the arena start, the size get the void star
-
-			}
-			else if (checkroomsss(e->map1, needbig) == true) {
-
-				size_type s = changemap(needbig, e, 1);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map2, needbig) == true) {
-				size_type s = changemap(needbig, e, 2);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map3, needbig) == true) {
-				size_type s = changemap(needbig, e, 3);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-
-			else {
-
-				return NULL;
-			}
-
-
-
-
-		}
-		else if (e->Arenasize == 512) {
-			if (checkroomsss(e->map, needbig) == true) {
-				size_type s = changemap(needbig, e, 0);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map1, needbig) == true) {
-				size_type s = changemap(needbig, e, 1);
-				return lowlevelalloc(s, needbig, e->startarena);
-
-			}
-			else if (checkroomsss(e->map2, needbig) == true) {
-				size_type s = changemap(needbig, e, 2);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map3, needbig) == true) {
-				size_type s = changemap(needbig, e, 3);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map4, needbig) == true) {
-				size_type s = changemap(needbig, e, 4);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map5, needbig) == true) {
-				size_type s = changemap(needbig, e, 5);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else {
-
-				return NULL;
-			}
-
-
-
-
-
-			// 1 2 3 4 5 6 
-		}
-		else if (e->Arenasize == 1024) {
-			if (checkroomsss(e->map, needbig) == true) {
-				size_type s = changemap(needbig, e, 0);
-				return lowlevelalloc(s, needbig, e->startarena);
-
-			}
-			else if (checkroomsss(e->map1, needbig) == true) {
-				size_type s = changemap(needbig, e, 1);
-				return lowlevelalloc(s, needbig, e->startarena);
-
-			}
-			else if (checkroomsss(e->map2, needbig) == true) {
-				size_type s = changemap(needbig, e, 2);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map3, needbig) == true) {
-				size_type s = changemap(needbig, e, 3);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map4, needbig) == true) {
-				size_type s = changemap(needbig, e, 4);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map5, needbig) == true) {
-				size_type s = changemap(needbig, e, 5);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map6, needbig) == true) {
-				size_type s = changemap(needbig, e, 6);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else if (checkroomsss(e->map7, needbig) == true) {
-				size_type s = changemap(needbig, e, 7);
-				return lowlevelalloc(s, needbig, e->startarena);
-			}
-			else {
-
-				return NULL;
-			}
-
-
-			//1 2 3 4 5 6 7 8
-		}
-
-
-
-
 	}
 
 
@@ -550,18 +337,22 @@ public:
 		//Arenasize  =chunk /2
 		//startarena = temp
 		temp->Arenasize = chunk / 2;
+		cout << temp->Arenasize; 
 		temp->startarena = temp;
 		//temp->maps = new int[chunk /2]; 
 		//temp->maps = int[Arenasize] f;
 		//temp->maps[i] = 0;
-		temp->map = 0;
-		temp->map1 = 0;
-		temp->map2 = 0;
-		temp->map3 = 0;
-		temp->map4 = 0;
-		temp->map5 = 0;
-		temp->map6 = 0;
-		temp->map7 = 0;
+		//int array[] = e->bitset;
+		//int const n = sizeof(array) / sizeof(array[0]);
+		temp->bitset = new int[temp ->Arenasize];
+		//cout << "Still alive";
+		// traverse through array and print each element
+		for (int i = 0; i <= temp->Arenasize; ++i) {
+			
+			temp->bitset[i] = 0;
+			//cout << temp->bitset[i];
+		}
+	
 
 
 		//temp->maps = test;
@@ -618,7 +409,7 @@ public:
 			he = reinterpret_cast<Arena*>(malloc());
 
 			he = arenainfo(he);
-			cout << he << endl;
+			//cout << he << endl;
 
 			Next_Arena->next = he;
 
@@ -631,7 +422,7 @@ public:
 
 	//First block is size 64 byte 
 	//We start with no arenas and wait for the user to request memory before we alloate
-	ultra()
+	superultra()
 	{
 		numarenas = 0;
 		HeapSize = 64;
@@ -646,17 +437,42 @@ public:
 
 
 
-	~ultra()
+	~superultra()
 	{
+		Arena* temp = Head_Arena;
+		Arena * temps = temp; 
+		if (Head_Arena != NULL) {
+			delete(Head_Arena->bitset);
+			if (Head_Arena->next != NULL) {
+				temp = Head_Arena->next; 
+				delete(Head_Arena);
+				while (temp != NULL) {
+					delete(temp->bitset);
+					temps = temp; 
+					temp = temp->next; 
+					delete(temps);
 
 
+
+				}
+
+
+			}
+			else {
+				delete(Head_Arena);
+			}
+
+
+
+
+		}
 	}
 
 
 	// Frees a bit map in a given arenas
-	void deallocate(Arena* a) {
+	void deallocate(void_star a) {
 
-		free(a);
+		free((Arena*) a);
 	}
 
 
@@ -681,7 +497,16 @@ public:
 
 			cout << "Map Looks like this";
 			cout << endl;
-			cout << temp->map << " " << endl;
+			int *array = temp->bitset;
+			//int const n = sizeof(array) / sizeof(array[0]);
+
+			// traverse through array and print each element
+			cout << endl; 
+			for (int i = temp->Arenasize; i >= 0; --i) {
+				cout << array[i];
+			}
+
+			//e->bitset = array;
 			cout << endl;
 
 			//cout << toBinary(temp->map) << " TO binary" << endl;
@@ -698,21 +523,24 @@ public:
 	//THis will allow the algorithm to revisit pointers
 	//and reallocate all of the values
 	void free(Arena* e) {
-		e->map = 0;
-		e->map1 = 0;
-		e->map2 = 0;
-		e->map3 = 0;
-		e->map4 = 0;
-		e->map5 = 0;
-		e->map6 = 0;
-		e->map7 = 0;
+		
+	
+
+		// traverse through array and print each element
+		for (int i = 0; i <= e->Arenasize; ++i) {
+			e->bitset[i] =0;
+		}
+		 
+
+
 	}
-
-
-
 	//Function designed to take in a mega allocator and reconstruct the bit map 
 
 	void recovery() {
+
+		
+
+
 		//Logic needs to be figured out after the allocator can allocate properly
 
 	}
