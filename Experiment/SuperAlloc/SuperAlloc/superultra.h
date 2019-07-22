@@ -191,34 +191,24 @@ public:
 	//If not then we return -1 meaning no room to allocate
 
 	size_type changeset(size_type needbig, Arena* e) {
-	
 		size_type counter = 0;
 		size_type positionchanging = 0;
-
-	
 		bool flag = false;
 		bool flag2 = false;
-		//int counter = 0; 
-		 //cout << endl; 
-		// cout << temporary << "TEMP HERE" ; 
-		// cout << endl;
 		while (flag == false) {
 			for (int i = 0; i <= e->Arenasize; i++) {
 				positionchanging = i;
 				for (int j = positionchanging; j <= e->Arenasize; j++) {
-					//cout << temporary[j] << endl;
 					if (counter == needbig) {
 
 						flag = true;
 						flag2 = true;
-						//i = 64; 
 						break;
 					}
 					else if (e->bitset[j] == 0)
 					{
 						//Increment counter by 1
 						counter += 1;
-						//cout << counter;
 					}
 					else {
 						//Reset the counter to 0
@@ -229,38 +219,21 @@ public:
 				if (flag2 == true) {
 					break;
 				}
-
-
 				counter = 0;
-
 			}
-			cout << endl;
-			//cout << positionchanging << " positionchaning" << endl;
-
-			//cout << "SHIP -1";
-			//return positionchanging; 
 		}
 		if (flag2 == false) {
 
 			positionchanging = -1;
 
 		}
-		//scout << "WE GET HERE";
 		int space = positionchanging;
 		for (int i = 0; i < needbig; i++) {
 
 			e->bitset[space] = 1;
 			space = space + 1;
 		}
-		//cout << temporary;
-		//s = s.replace(pos, needbig, nhold);
-		//Send String to be uint
-				//Set map to be new uint
 		return positionchanging;
-
-
-		//int pos = a.find(hold);
-		//cout << hold; 
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -281,24 +254,18 @@ public:
 			return NULL; 
 		}
 	}
-
-
-
 	//Bitallocate -> individually allocates based on bitmap..
 	//Set the memory to false and keep this loop going 
 	//We then iterate through the linked list if therre is no room or any arenas in the linked list
 	//Then we allocate a new arena and make sure the arena is in the linked list
 	//We then make sure that the arena has enough room to allocate the given memory that has been input by the programmer
-
 	void_star bitallocate(size_type needbig) {
 		while (1) {
 			if (mut.try_lock()) {
 				bool memoryallocated = false;
-
 				while (memoryallocated == false) {
 					if (Head_Arena == NULL) {
 						allocate();
-
 					}
 					else {
 						//Traverse all arenas and find a suitable place
@@ -308,15 +275,12 @@ public:
 							if (store == NULL) {
 								//Failed
 								temp = temp->next;
-
 							}
 							else {
 								mut.unlock();
 								return store;
 								//Success!
-
 							}
-
 						}
 						if (memoryallocated == false) {
 							allocate();
@@ -325,38 +289,19 @@ public:
 				}
 			}
 		}
-
-		//Check Head Node... 
-		//If no head Node allocate
-		//Search the head nodes array... Lets fix that while we are here 
-		//Then go to the next node.. If its NULL allocate
-		//
 	}
-
 	Arena* arenainfo(Arena* temp) {
 		//Arenasize  =chunk /2
 		//startarena = temp
 		temp->Arenasize = chunk / 2;
 		cout << temp->Arenasize; 
 		temp->startarena = temp;
-		//temp->maps = new int[chunk /2]; 
-		//temp->maps = int[Arenasize] f;
-		//temp->maps[i] = 0;
-		//int array[] = e->bitset;
-		//int const n = sizeof(array) / sizeof(array[0]);
 		temp->bitset = new int[temp ->Arenasize];
-		//cout << "Still alive";
 		// traverse through array and print each element
 		for (int i = 0; i <= temp->Arenasize; ++i) {
 			
 			temp->bitset[i] = 0;
-			//cout << temp->bitset[i];
 		}
-	
-
-
-		//temp->maps = test;
-
 		return temp;
 	}
 
@@ -395,31 +340,15 @@ public:
 			Arena* he;
 			Next_Arena = Head_Arena;
 			while (Next_Arena->next != NULL) {
-
 				//Get to the last Node
 				Next_Arena = Next_Arena->next;
-
 			}
-
-
-			/*
-			Make New Node
-
-			*/
 			he = reinterpret_cast<Arena*>(malloc());
-
 			he = arenainfo(he);
-			//cout << he << endl;
-
 			Next_Arena->next = he;
-
 		}
-
-		//Function DOne
+	//Function DOne
 	}
-
-
-
 	//First block is size 64 byte 
 	//We start with no arenas and wait for the user to request memory before we alloate
 	superultra()
@@ -429,14 +358,7 @@ public:
 		chunk = 64;
 		Head_Arena = NULL;
 		Next_Arena = NULL;
-
-		//allocate();
-		//start = Head_Arena->startarena; 
-		//Call Allocate 
 	}
-
-
-
 	~superultra()
 	{
 		Arena* temp = Head_Arena;
@@ -451,27 +373,17 @@ public:
 					temps = temp; 
 					temp = temp->next; 
 					delete(temps);
-
-
-
 				}
-
-
 			}
 			else {
 				delete(Head_Arena);
 			}
-
-
-
-
 		}
 	}
 
 
 	// Frees a bit map in a given arenas
 	void deallocate(void_star a) {
-
 		free((Arena*) a);
 	}
 
@@ -483,56 +395,27 @@ public:
 		temp = Head_Arena;
 		int counter = 0;
 		while (temp != NULL) {
-
-			//cout << temp->startarena; 
-
-			cout << temp->startarena << " WIth the position in the linked list as " << counter << endl;
-
-			cout << endl;
-
-			cout << endl;
-
 			counter = counter + 1;
-			//cout << temp->map << endl;
-
 			cout << "Map Looks like this";
 			cout << endl;
-			int *array = temp->bitset;
-			//int const n = sizeof(array) / sizeof(array[0]);
-
 			// traverse through array and print each element
 			cout << endl; 
 			for (int i = temp->Arenasize; i >= 0; --i) {
-				cout << array[i];
+				cout << temp->bitset[i];
 			}
-
-			//e->bitset = array;
 			cout << endl;
-
-			//cout << toBinary(temp->map) << " TO binary" << endl;
-			cout << endl;
-			//cout << count << endl; 
-			//cout << endl; 
-			//cout << temp->maps[0];
 			temp = temp->next;
 		}
-		cout << "Finished";
 	}
 
 	//Set every value each 64 bit pointer to be 0
 	//THis will allow the algorithm to revisit pointers
 	//and reallocate all of the values
 	void free(Arena* e) {
-		
-	
-
 		// traverse through array and print each element
 		for (int i = 0; i <= e->Arenasize; ++i) {
 			e->bitset[i] =0;
 		}
-		 
-
-
 	}
 	//Function designed to take in a mega allocator and reconstruct the bit map 
 
