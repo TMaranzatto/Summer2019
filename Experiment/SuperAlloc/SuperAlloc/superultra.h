@@ -420,13 +420,48 @@ public:
 	//Function designed to take in a mega allocator and reconstruct the bit map 
 
 	void recovery() {
+		void_star test = Head_Arena -> startarena;
+		size_type hit = 64; 
+		void_star lets = &test + hit; 
+		if (lets == NULL) {
 
-		
+
+			cout << "NO NODE";
 
 
-		//Logic needs to be figured out after the allocator can allocate properly
+		}
+		else 
+		{
+			cout << "We have a Node hit";
+			hit = hit * 2; 
+			
+			bool recover = true; 
+			while (recover == true) {
+				lets = &lets + hit;
+				cout << lets << "THIS VALUE"<< endl;
+				cout << hit; 
+				cout << endl; 
+				cout << endl; 
+				Arena* st = (Arena*)lets;
+				if (st->bitset  == NULL) {
+					
+					recover = false; 
 
+				}
+				else {
+					hit = hit * 2; 
+					cout << "NODE";
+					//cout << lets; 
+
+
+				}
+			}
+		}
 	}
+
+	
+
+
 
 
 

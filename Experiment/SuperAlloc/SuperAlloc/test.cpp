@@ -80,6 +80,9 @@ int main() {
 	su.bitallocate(lfs);
 	void* tes = su.gethead();
 	su.deallocate(tes);
+	su.bitallocate(10);
+	cout << endl;
+	su.recovery();
 	cout << endl; 
 	su.print();
 	cout << endl << "FINISH";
