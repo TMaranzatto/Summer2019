@@ -1,60 +1,99 @@
 #include <cstddef>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-
 #include <stdio.h>
+#include <algorithm>
 
-struct arrayNode{
-	int[64] array;
+struct arrayNode {
+	int array[64];
 	unsigned long long int bitmap;
 	int min;
 	int max;
 	arrayNode* next;
-
-}
+};
 
 //this implementation assumes a uniform distro of keys
 //as well as naiive partitions
 //no merging implemented yet
-//assume value is within some reasonable range
+//assume that our value is within some reasonable range
 __global__
 void insert(arrayNode *start, int value){
 	//finding the location to insert
-	arrayNode *current = *start;
+	const int resolution = 8;
+	arrayNode *current = start;
 	int jumps[resolution] = { 3, 5, 7, 11, 13, 17, 19, 23 };
 
-	while(current->next != NULL){
-		
+	while (current != NULL) {
+		//1. find location to insert into
+		if (current->min <= value && current->max >= value) {
+			int insertion_location = (int)(value / ((current->max - current->min) / 64));
+			int dir = -1;
+			bool successful_insertion_flag = false;
 
-		else if((current->min) <= value && value <= (current->max)){
-			for(int i = 0; i < 64; i++){
-				if (current->bitmap != ULLONG_MAX){
+		//2. try to insert at the location in the array the value
+		//would ideally exist in
+			for (int i = 0; i < 64; i++) {
 
-					int jump = jumps[threadIdx.x % resolution];
-					unsigned long long int index = (blockIdx.x * blockDim.x + threadIdx.x + jump) % 64;
-					unsigned long long int loc = 1 << i;
-					unsigned long long int previousValue = atomicOr(bitmap, loc);
+				int search_location = insertion_location + dir * i;
+				unsigned long long int bitmap_location = 1 << search_location;
 
-					if ((previousValue >> i) & 1 == 0) {
+				//checking if we are outside bounds
+				if (search_location < 0 || search_location >= 64) { break; }
+				//checking if we are above the target value
+				//which would break the sorting situation
+				if (dir == -1) { if (current->array[search_location] > value) { break; } }
+				//and checking for below target
+				else if (current->array[search_location] < value) { break; }
 
-						current->array[index] = value;
-					}
-					else{
-
-						continue;
-					}
+				//if we succeed all the above value and boundary conditions
+				//then we try to modify data in the array through the proxy
+				//of our bitmap
+				unsigned long long int previousValue = atomicOr(current->bitmap, bitmap_location);
+				if ((previousValue >> bitmap_location) & 1 == 0) {
+					current->array[search_location] = value;
+					//setting flag for safety.
+					//could get rid of this in refactoring
+					successful_insertion_flag = true;
+					return;
 				}
-				else{
 
+				//otherwise, lets loop again and hope it works
+				else {
+					dir *= -1;
 					continue;
 				}
 			}
+
+		//3. if above fails, do the split routine
+			if (successful_insertion_flag == false) {
+				//NEED LOCK HERE
+				arrayNode *new_arrayNode = new arrayNode;
+				//very slow here but should be working
+				//need to speed this up later
+
+				//setting new array values
+				for (int i = 0; i < 32; i++) {
+					new_arrayNode->array[2 * i] = current->array[32 + i];
+					//new_arrayNode->array[(2 * i) + 1] = current->array[32 + i];
+				}
+
+				//and old array values
+				for (int i = 31; i >= 0; i--) {
+					current->array[2 * i + 1] = current->array[i];
+				}
+				new_arrayNode->next = current->next;
+				current->next = new_arrayNode;
+			}
+		//TODO
+		//4. else, if this array and its right neighbor are < a third full
+		//merge them
+		
 		}
-		else{
-			*current = current->next;
+		else {
+			current = current->next;
+			continue;
 		}
 	}
-
 
 }
 
