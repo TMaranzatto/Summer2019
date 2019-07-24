@@ -10,6 +10,18 @@ struct arrayNode {
 	int min;
 	int max;
 	arrayNode* next;
+	int seqLock;
+	bool isStart;
+
+	arrayNode(int minn, int maxx, arrayNode* nextt){
+		bitmap = 0;
+		min = minn;
+		max = maxx;
+		next = nextt;
+		seqLock = 0;
+		isStart = false;
+	}
+	~arrayNode(){}
 };
 
 //this implementation assumes a uniform distro of keys
@@ -18,32 +30,53 @@ struct arrayNode {
 //assume that our value is within some reasonable range
 __global__
 void insert(arrayNode *start, int value){
+	startInsert:
 	//finding the location to insert
-	const int resolution = 8;
 	arrayNode *current = start;
-	int jumps[resolution] = { 3, 5, 7, 11, 13, 17, 19, 23 };
-
-	while (current != NULL) {
-		//1. find location to insert into
-		if (current->min <= value && current->max >= value) {
+	//while we are not in the 
+	while ((current->next)->next != NULL) {
+		//1. find location to insert into, and skip the first dummy node
+		if (current->min <= value && current->max >= value && current->isStart == true) {
 			int insertion_location = (int)(value / ((current->max - current->min) / 64));
 			int dir = -1;
+			bool useCurrDir = false;
 			bool successful_insertion_flag = false;
 
 		//2. try to insert at the location in the array the value
 		//would ideally exist in
 			for (int i = 0; i < 64; i++) {
-
 				int search_location = insertion_location + dir * i;
+				insertion_location = search_location;
 				unsigned long long int bitmap_location = 1 << search_location;
 
 				//checking if we are outside bounds
 				if (search_location < 0 || search_location >= 64) { break; }
+
 				//checking if we are above the target value
 				//which would break the sorting situation
-				if (dir == -1) { if (current->array[search_location] > value) { break; } }
+
+				if (dir == -1) {
+					if (current->array[search_location] > value && useCurrDir == false) { 
+						dir *= -1; 
+						useCurrDir = true; 
+						continue;
+					}
+					else if (current->array[search_location] > value && useCurrDir == true){
+						break;
+					}
+				}
+
 				//and checking for below target
-				else if (current->array[search_location] < value) { break; }
+				else{
+					if (current->array[search_location] < value && useCurrDir == false) { 
+					dir *= -1; 
+					useCurrDir = true; 
+					continue;
+					}
+					else if (current->array[search_location] < value && useCurrDir == true){
+						break;
+					}
+				}
 
 				//if we succeed all the above value and boundary conditions
 				//then we try to modify data in the array through the proxy
@@ -59,36 +92,62 @@ void insert(arrayNode *start, int value){
 
 				//otherwise, lets loop again and hope it works
 				else {
-					dir *= -1;
+					if( useCurrDir == false){ dir *= -1; }
 					continue;
 				}
 			}
 
 		//3. if above fails, do the split routine
 			if (successful_insertion_flag == false) {
+				if(current->seqLock%2 == 1){
+					goto startInsert;
+				}
+				atomicCAS(current->seqLock)
 				//NEED LOCK HERE
-				arrayNode *new_arrayNode = new arrayNode;
+				arrayNode *new_arrayNode = new arrayNode(-1,-1, NULL);
 				//very slow here but should be working
 				//need to speed this up later
 
 				//setting new array values
+				int minval = 10000000;
+				int maxval = 0;
 				for (int i = 0; i < 32; i++) {
-					new_arrayNode->array[2 * i] = current->array[32 + i];
+					int new_value = current->array[32 + i]
+					if(new_value != 0){
+						new_arrayNode->array[2 * i] = new_value;
+						new_arrayNode->bitmap |= unsigned long long int (1<<(2 * i));
+					}
+					minval = min(minval, new_value)
+					maxval = max(minval, cnew_value)
 					//new_arrayNode->array[(2 * i) + 1] = current->array[32 + i];
 				}
+				new_arrayNode->min = minval;
+				new_arrayNode->max = maxval;
 
 				//and old array values
+				minval = maxval + 1;
+				maxval = 0;
 				for (int i = 31; i >= 0; i--) {
+					int new_value = current->array[i]
+					if(new_value != 0){
+						new_arrayNode->array[2 * i + 1] = new_value;
+						new_arrayNode->bitmap |= unsigned long long int (1<<(2 * i + 1));
+					}
 					current->array[2 * i + 1] = current->array[i];
+					maxval = max(minval, current->array[i])
 				}
+				current->min = minval;
+				current->max = maxval;
+				
+				//finally setting the node pointers 
 				new_arrayNode->next = current->next;
 				current->next = new_arrayNode;
 			}
+		}
 		//TODO
-		//4. else, if this array and its right neighbor are < a third full
+		//4. else, if this array and its right neighbor are < third full
 		//merge them
 		
-		}
 		else {
 			current = current->next;
 			continue;
