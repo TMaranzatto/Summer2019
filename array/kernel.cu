@@ -4,24 +4,46 @@
 #include <stdio.h>
 #include <algorithm>
 
+
+//defining our structs for the data structure
+
+//this is a simple key value pair with constructor
+template<typename KEY, typename VALUE>
+struct KeyValue{
+public:
+	KEY key;
+	VALUE value;
+
+	KeyValue(KEY kkey, VALUE vval) {
+		key = kkey;
+		value = vval;
+	}
+};
+
+//this is the arrayNode, the key structure we operate over for our graph search
+//becuase the above is templated, we define clearly what our data types will be for the graph
+//(TODO) it holds an array of key value pairs as well as a bitmap denoting which indices have data
+//two locks indicate if we are modifying internal (array) data or external (next pointer) data
 struct arrayNode {
+public:
+	//KeyValue array[64]
 	int array[64];
-	unsigned long long int bitmap;
 	int min;
 	int max;
 	arrayNode* next;
-	int seqLock;
 	bool isStart;
 
-	arrayNode(int minn, int maxx, arrayNode* nextt){
-		bitmap = 0;
-		min = minn;
-		max = maxx;
-		next = nextt;
-		seqLock = 0;
+	unsigned long long int bitmap;
+	int internal_lock;
+	int external_lock;
+	int operating_threads;
+
+	arrayNode(void){
 		isStart = false;
-	}
-	~arrayNode(){}
+		external_lock = 0;
+		internal_lock = 0;
+		operating_threads = 0;
+		}
 };
 
 //this implementation assumes a uniform distro of keys
@@ -30,20 +52,31 @@ struct arrayNode {
 //assume that our value is within some reasonable range
 __global__
 void insert(arrayNode *start, int value){
+
 	startInsert:
-	//finding the location to insert
 	arrayNode *current = start;
-	//while we are not in the 
 	while ((current->next)->next != NULL) {
-		//1. find location to insert into, and skip the first dummy node
+//CASE 1: find location to insert into, and skip the first dummy node
+//this uses a dead simple traversal technique for a linked list
+
+		//if this node is being externally modified we should avoid modifying it for now
+		if (current->external_lock == 1) { goto startInsert; }
 		if (current->min <= value && current->max >= value && current->isStart == true) {
+
+			//as we are operating in this node,  set the internal_lock flag to true
+			//as well as increase the working threads node variable
+			atomicCAS(current->internal_lock, 0, 1);
+			atomicAdd(current->operating_threads, 1);
+
 			int insertion_location = (int)(value / ((current->max - current->min) / 64));
 			int dir = -1;
 			bool useCurrDir = false;
 			bool successful_insertion_flag = false;
 
-		//2. try to insert at the location in the array the value
-		//would ideally exist in
+//CASE 2: try to insert at the ideal location in the array.  If this fails we
+//'bounce' around the value, checking to see if there are available slots on the
+//left or right side of the ideal location to insert.  If this too fails, we move to
+//the next case
 			for (int i = 0; i < 64; i++) {
 				int search_location = insertion_location + dir * i;
 				insertion_location = search_location;
@@ -54,7 +87,6 @@ void insert(arrayNode *start, int value){
 
 				//checking if we are above the target value
 				//which would break the sorting situation
-
 				if (dir == -1) {
 					if (current->array[search_location] > value && useCurrDir == false) { 
 						dir *= -1; 
@@ -90,35 +122,48 @@ void insert(arrayNode *start, int value){
 					return;
 				}
 
-				//otherwise, lets loop again and hope it works
+				//otherwise, lets loop again and hope it works for the next index in the array
 				else {
 					if( useCurrDir == false){ dir *= -1; }
 					continue;
 				}
 			}
 
-		//3. if above fails, do the split routine
+//TODO: MAKE THE BELOW OPERATE IN THIS CASE AS WELL AS THE 2/3 FULL CASE
+
+//CASE 3: if above fails, call the 'split' routine.  This seperates the data in the arraynode
+// into two new arraynodes with the data spaced out evenly.  This involves some complex locking
+//mechanisms and waiting, but this (should) work in a reasonable amount of time.
 			if (successful_insertion_flag == false) {
-				if(current->seqLock%2 == 1){
+				//the internal working thread is converted into an external working thread
+				//and so the number of internal working threads must decrease
+				//but only after we declare that we are working on this node to the data struct.
+				//else we get weird edge cases where multiple threads are trying to insert
+				if (atomicCAS(current->external_lock, 0, 1) == 1) {
 					goto startInsert;
 				}
-				atomicCAS(current->seqLock)
-				//NEED LOCK HERE
-				arrayNode *new_arrayNode = new arrayNode(-1,-1, NULL);
-				//very slow here but should be working
-				//need to speed this up later
+				atomicSub(current->operating_threads, 1);
+
+				//now we spin until the number of active internal threads in the node
+				//reaches 0.  this is wasteful, but hopefully only a handful of threads are working
+				//on a node at any point, and the above insertion operation is quick
+				while(current->internal_lock == 1){
+					continue;
+				}
+
+				arrayNode *new_arrayNode = new arrayNode();
 
 				//setting new array values
 				int minval = 10000000;
 				int maxval = 0;
 				for (int i = 0; i < 32; i++) {
-					int new_value = current->array[32 + i]
+					int new_value = current->array[32 + i];
 					if(new_value != 0){
 						new_arrayNode->array[2 * i] = new_value;
 						new_arrayNode->bitmap |= unsigned long long int (1<<(2 * i));
 					}
-					minval = min(minval, new_value)
-					maxval = max(minval, cnew_value)
+					minval = std::min(minval, new_value);
+					maxval = std::max(minval, new_value);
 					//new_arrayNode->array[(2 * i) + 1] = current->array[32 + i];
 				}
 				new_arrayNode->min = minval;
@@ -128,13 +173,13 @@ void insert(arrayNode *start, int value){
 				minval = maxval + 1;
 				maxval = 0;
 				for (int i = 31; i >= 0; i--) {
-					int new_value = current->array[i]
+					int new_value = current->array[i];
 					if(new_value != 0){
 						new_arrayNode->array[2 * i + 1] = new_value;
 						new_arrayNode->bitmap |= unsigned long long int (1<<(2 * i + 1));
 					}
 					current->array[2 * i + 1] = current->array[i];
-					maxval = max(minval, current->array[i])
+					maxval = std::max(minval, current->array[i]);
 				}
 				current->min = minval;
 				current->max = maxval;
@@ -142,12 +187,18 @@ void insert(arrayNode *start, int value){
 				//finally setting the node pointers 
 				new_arrayNode->next = current->next;
 				current->next = new_arrayNode;
+
+				//and now reset our insertion routine and unlock
+				current->internal_lock = 0;
+				current->external_lock = 0;
+				goto startInsert;
 			}
 		}
 		//TODO
-		//4. else, if this array and its right neighbor are < third full
-		//merge them
+		//4. else, if this array and its right neighbor are < 1/3 full merge them
 		
+		//if our initial question as to if this node contains our desired key range fails
+		//then try the next one
 		else {
 			current = current->next;
 			continue;
@@ -160,12 +211,12 @@ void insert(arrayNode *start, int value){
 //else returns NULL
 //assumes array is for integers for simplicity
 //can template this later
-__global__
-void get(int* array, unsigned long long int* bitmap) {
-	printf("your thread is %d.%d.\n", blockIdx.x * blockDim.x, threadIdx.x);
 
+__global__
+KeyValue<int, int> get(arrayNode * node){
 	const int resolution = 8;
 	int jumps[resolution] = { 3, 5, 7, 11, 13, 17, 19, 23 };
+
 	//Loop through all 64 elements to see if we find one that works
 	//hopefully our thdId gives us a result immediatly
 	for(int k = 0; k < 64; k++){
@@ -173,35 +224,24 @@ void get(int* array, unsigned long long int* bitmap) {
 		int test = 0;
 		//checking edge case that the array is empty
 		//send a message to host
-		if (*bitmap == ULLONG_MAX) {
-			//do something
-			
-			flag = -1;
-			#if __CUDA_ARCH__ >= 200
-				printf("%d\n", flag);
-			#endif
+		if (node->bitmap == ULLONG_MAX) {
+			return KeyValue<int, int>(-1, -1);
 		}
+
 		int jump = jumps[threadIdx.x % resolution];
 		unsigned long long int i = (blockIdx.x * blockDim.x + threadIdx.x + jump) % 64;
 		unsigned long long int loc = 1 << i;
 
-		unsigned long long int previousValue = atomicOr(bitmap, loc);
+		unsigned long long int previousValue = atomicOr(node->bitmap, loc);
 		if ((previousValue >> i) & 1 == 0) {
 			//do something with the value
-			flag = 1;
-			#if __CUDA_ARCH__ >= 200
-						printf("%d\n", flag);
-			#endif
+			return node->array[i];
 		}
 
 		else{
 			//else try next element
 			continue;
-			#if __CUDA_ARCH__ >= 200
-				printf("try again\n");
-			#endif
 		}
-
 	}
 }
 

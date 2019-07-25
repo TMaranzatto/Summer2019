@@ -1,0 +1,51 @@
+The cpu and the gpu directories have the lock-free implementations for CPU
+and GPU, respectively. Each data structure can be compiled individually
+by using g++ and nvcc for CPU and GPU, respectively.
+
+1. CPU compilation flags:
+
+-O3 -pthread -DNUM_ITEMS=num_ops -DNUM_THREADS=num_threads -DKEYS=num_keys
+
+For example, to compile the lock-free hash table for 50000 operations, 
+8 threads, and 100 keys, the compilation should be done as follows.
+
+g++ -O3 -pthread -DNUM_ITEMS=50000 -DNUM_THREADS=8 -DKEYS=100 -o LockFreeDS/cpu/hashtable/LockFreeHashTable LockFreeDS/cpu/hashtable/LockFreeHashTable.cpp
+
+Optional compilation flag: -DPRE_ALLOCATE
+
+If this flag is turned on, all dynamic memory will be allocated before the 
+sequence of operations begins.
+
+2. GPU compilation flags:
+
+-O3 -arch sm_20 -I ~/NVIDIA_GPU_Computing_SDK/C/common/inc/ -DNUM_ITEMS=num_ops -DFACTOR=num_ops_per_thread -DKEYS=num_keys
+
+For example, to compile the lock-free hash table for 50000 operations, one
+operation per thread, and 100 keys, the compilation should be done as follows.
+
+nvcc -O3 -arch sm_20 -I ~/NVIDIA_GPU_Computing_SDK/C/common/inc/ -DNUM_ITEMS=50000 -DFACTOR=1 -DKEYS=100 -o LockFreeDS/gpu/hashtable/LockFreeHashTable LockFreeDS/gpu/hashtable/LockFreeHashTable.cu
+
+The include path is needed for cutil.h. If cutil.h is not available, comment
+that include line in the source code.
+
+3. Inputs:
+
+The linked list, hash table, and skip list take two inputs, namely, the
+percentage of add and delete operations. For example, to run with 30% add
+and 50% delete operations, specify 30 and 50 as two input arguments in the
+command line. The priority queue takes only one argument as input, namely,
+the percentage of add operations.
+
+4. Outputs:
+
+The total time (in milliseconds) to execute the sequence of operations is 
+printed. The sequence of outcomes of the operations is stored in an array.
+Minimal modification of the source code is needed at the end of the main
+function to dump this result array into a file for further inspection, if 
+needed.
+
+5. Reference:
+
+Prabhakar Misra and Mainak Chaudhuri. Performance Evaluation of Concurrent 
+Lock-free Data Structures on GPUs. In Proceedings of the 18th IEEE 
+International Conference on Parallel and Distributed Systems, December 2012.
